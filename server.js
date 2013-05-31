@@ -1,8 +1,5 @@
-///http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
-var mongoose = require ("mongoose"); 
-var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 
-// conexion a mongolabs 'mongodb://dolarhoy:Hola123!@ds051447.mongolab.com:51447/dolarhoydb';
-'mongodb://dolarhoy:Traserito#321!@widmore.mongohq.com:10010/dolarhoydb';
+var mongoose = require ("mongoose"); ///http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
+var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://dolarhoy:Traserito#321!@widmore.mongohq.com:10010/dolarhoydb';
 var Crawler = require("crawler").Crawler;
 var express = require('express');
 var jquery = require('jquery');
@@ -15,6 +12,7 @@ var valoresSchema = require("./Model/mongoSchema").valoresDolarHoySchema;
 var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
 var work = false;
 var offset = -3;
+var intervalTime = 900000;
 
 var app = express();
 app.use(express.logger());
@@ -32,11 +30,11 @@ function main(){
             if(hour >= 9 && hour <= 18){
                 console.log('Working...');
                 try { worker(); }
-                catch (Err){ onError(Err); }
+                catch (Err) { onError(Err); }
             } else { console.log('Not Working hours...'); }
         } else { console.log('No Working Weekday...'); }
     }
-    setTimeout(main, 60000);
+    setTimeout(main, intervalTime);
 }
 
 function worker(){
@@ -45,7 +43,7 @@ function worker(){
         "uri":"http://ambito.com/economia/mercados/monedas/dolar/",
         "jQuery":false,
         "callback":function(error,result) {
-            if(error && error.response.statusCode !== 200){console.log('Request error.');}
+            if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
             if(result.body.length > 0){
                 getValuesDolar(result.body.toString());
                 console.log("Grabbed Dolar ", result.body.length, "bytes");
@@ -56,7 +54,7 @@ function worker(){
         "uri":"http://ambito.com/economia/mercados/monedas/euro/",
         "jQuery":false,
         "callback":function(error,result) {
-            if(error && error.response.statusCode !== 200){console.log('Request error.');}
+            if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
             if(result.body.length > 0){
                 getValuesEuro(result.body.toString());
                 console.log("Grabbed Euro ", result.body.length, "bytes");
@@ -113,10 +111,24 @@ function saveVals(){
                 date : dateBA
             });
             
-            valoresDolarHoyObj.save( 
-                function (err) { if (err) { onError('Error on save!'); }
-                else { console.log ('Saved!'); }
-            });
+            Valores.findOne()
+            .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta euroCompra euroVenta date')
+            .sort('-date')
+            .exec(
+            function (err, doc) {
+                if (err) return onError(err);
+                if( doc.dolarCompra != valoresDolarHoyObj.dolarCompra ||
+                doc.dolarVenta != valoresDolarHoyObj.dolarVenta ||
+                doc.dolarBlueCompra != valoresDolarHoyObj.dolarBlueCompra ||
+                doc.dolarBlueVenta != valoresDolarHoyObj.dolarBlueVenta ||
+                doc.euroCompra != valoresDolarHoyObj.euroCompra ||
+                doc.euroVenta != valoresDolarHoyObj.euroVenta ) {
+                    valoresDolarHoyObj.save( function (err) { 
+                        if (err) { onError('Error on save!'); }
+                        else { console.log ('Saved!'); }
+                    });
+                }
+            }); 
         }
     }
     catch(err){ onError(err); }
