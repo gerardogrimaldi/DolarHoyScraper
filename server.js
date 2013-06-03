@@ -15,7 +15,14 @@ var offset = -3;
 var intervalTime = 900000;
 
 var app = express();
-app.use(express.logger());
+
+app.configure(function () {
+    app.set('public', __dirname + '/public');
+    app.use(express.logger());
+    app.use(express.bodyParser()),
+    app.set('port', process.env.PORT || 3000);
+});
+
 
 mongoose.connect(uristring, function (err, res) {
     if (err) { console.log ('ERROR connecting to: ' + uristring + '. ' + err); } 
@@ -141,6 +148,10 @@ function onError(err) {
     mail.sendMail();
     console.log(err);
 }
+
+app.use(express.static(__dirname + '/../public'));
+
+app.get('/',function(req, res){});
 
 app.get('/start/:pass', function(req, res) {
     if(req.params.pass != 'Hola123!'){return res.send('Error: Wrong password...');}

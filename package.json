@@ -9,7 +9,8 @@
         "request": "2.21.0",
         "jquery": "1.6",
         "nodemailer" : "0.4.4",
-        "crawler": "0.2.4"
+        "crawler": "0.2.4",
+        "jade" : "0.31.1"
     },
     "engines": {
         "node": "0.10.x",
