@@ -3,6 +3,7 @@ var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb:
 var Crawler = require("crawler").Crawler;
 var express = require('express');
 var jquery = require('jquery');
+var path = require('path');
 var compraDolar;
 var ventaDolar;
 var compraEuro;
@@ -16,11 +17,16 @@ var intervalTime = 900000;
 
 var app = express();
 
-app.configure(function () {
-    app.set('public', __dirname + '/public');
-    app.use(express.logger());
-    app.use(express.bodyParser()),
-    app.set('port', process.env.PORT || 3000);
+app.configure(function(){
+  app.set('port', process.env.PORT || 3000);
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.use(express.favicon());
+  app.use(express.logger('dev'));
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+    app.use(express.static(path.join(__dirname, 'public')));
 });
 
 
@@ -130,12 +136,19 @@ function saveVals(){
                 doc.dolarBlueVenta != valoresDolarHoyObj.dolarBlueVenta ||
                 doc.euroCompra != valoresDolarHoyObj.euroCompra ||
                 doc.euroVenta != valoresDolarHoyObj.euroVenta ) {
-                    valoresDolarHoyObj.save( function (err) { 
-                        if (err) { onError('Error on save!'); }
-                        else { console.log ('Saved!'); }
-                    });
+                valoresDolarHoyObj.save( function (err) { 
+                    if (err) { onError('Error on save!'); }
+                    else {
+                        console.log ('Saved!');
+                        compraDolar = undefined;
+                        ventaDolar = undefined;
+                        compraEuro = undefined;
+                        ventaEuro = undefined; 
+                    }
+                        
                 }
-            }); 
+                )} 
+            });
         }
     }
     catch(err){ onError(err); }
@@ -149,9 +162,9 @@ function onError(err) {
     console.log(err);
 }
 
-app.use(express.static(__dirname + '/../public'));
-
-app.get('/',function(req, res){});
+app.get('/',function(req, res){
+  res.render('index', { title: 'Express' });
+});
 
 app.get('/start/:pass', function(req, res) {
     if(req.params.pass != 'Hola123!'){return res.send('Error: Wrong password...');}
