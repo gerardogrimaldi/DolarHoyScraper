@@ -4,19 +4,18 @@ var Crawler = require("crawler").Crawler;
 var express = require('express');
 var jquery = require('jquery');
 var path = require('path');
+var mail = require("./nodemail");
+var valoresSchema = require("./Model/mongoSchema").valoresDolarHoySchema;
+var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
 var compraDolar;
 var ventaDolar;
 var compraEuro;
 var ventaEuro;
-var mail = require("./nodemail");
-var valoresSchema = require("./Model/mongoSchema").valoresDolarHoySchema;
-var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
+var intervalTime = 900000;
 var work = false;
 var offset = -3;
-var intervalTime = 900000;
 
 var app = express();
-
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
@@ -27,12 +26,6 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
-});
-
-
-mongoose.connect(uristring, function (err, res) {
-    if (err) { console.log ('ERROR connecting to: ' + uristring + '. ' + err); } 
-    else { console.log ('Succeeded connected to: ' + uristring); }
 });
     
 function main(){
@@ -105,14 +98,16 @@ function getValuesEuro(resultString){
 function saveVals(){
     try{
         if (compraDolar !== undefined && ventaDolar !== undefined && compraEuro !== undefined && ventaEuro !== undefined){
-            
             var dolarTarjeta;
             var valoresDolarHoyObj;
             var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
             
             dolarTarjeta = parseFloat(ventaDolar[0].replace(",",".")) + (parseFloat(ventaDolar[0].replace(",",".")) * 20 /100);
             dolarTarjeta = dolarTarjeta.toFixed(3);
-            
+            mongoose.connect(uristring, function (err, res) {
+                if (err) { console.log ('ERROR connecting to: ' + uristring + '. ' + err); } 
+                else { console.log ('Succeeded connected to: ' + uristring); }
+            });
             valoresDolarHoyObj = new Valores ({
                 dolarCompra : compraDolar[0].replace(",","."),
                 dolarVenta : ventaDolar[0].replace(",","."),
@@ -128,27 +123,24 @@ function saveVals(){
             .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta euroCompra euroVenta date')
             .sort('-date')
             .exec(
-            function (err, doc) {
-                if (err) return onError(err);
-                if( doc.dolarCompra != valoresDolarHoyObj.dolarCompra ||
-                doc.dolarVenta != valoresDolarHoyObj.dolarVenta ||
-                doc.dolarBlueCompra != valoresDolarHoyObj.dolarBlueCompra ||
-                doc.dolarBlueVenta != valoresDolarHoyObj.dolarBlueVenta ||
-                doc.euroCompra != valoresDolarHoyObj.euroCompra ||
-                doc.euroVenta != valoresDolarHoyObj.euroVenta ) {
-                valoresDolarHoyObj.save( function (err) { 
-                    if (err) { onError('Error on save!'); }
-                    else {
-                        console.log ('Saved!');
-                        compraDolar = undefined;
-                        ventaDolar = undefined;
-                        compraEuro = undefined;
-                        ventaEuro = undefined; 
+                function (err, doc) {
+                    if (err) return onError(err);
+                    if( doc.dolarCompra != valoresDolarHoyObj.dolarCompra ||
+                    doc.dolarVenta != valoresDolarHoyObj.dolarVenta ||
+                    doc.dolarBlueCompra != valoresDolarHoyObj.dolarBlueCompra ||
+                    doc.dolarBlueVenta != valoresDolarHoyObj.dolarBlueVenta ||
+                    doc.euroCompra != valoresDolarHoyObj.euroCompra ||
+                    doc.euroVenta != valoresDolarHoyObj.euroVenta ) {
+                    valoresDolarHoyObj.save( function (err) { 
+                        if (err) { onError('Error on save!'); }
+                        else { console.log ('Saved!'); }
                     }
-                        
-                }
-                )} 
-            });
+                    )} 
+                });
+            compraDolar = undefined;
+            ventaDolar = undefined;
+            compraEuro = undefined;
+            ventaEuro = undefined; 
         }
     }
     catch(err){ onError(err); }
