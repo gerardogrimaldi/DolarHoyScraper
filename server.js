@@ -13,7 +13,7 @@ var compraEuro;
 var ventaEuro;
 var intervalTime = 900000;
 var work = false;
-var offset = 0;
+var offset = -3;
 
 var app = express();
 app.configure(function(){
@@ -32,7 +32,6 @@ function main(){
     if (work) {
         var day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getDay();//var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" ).getDay();//;
         if(day !== 0 && day !== 6){
-            var hour = new Date( new Date().getUTCDate() + offset * 3600 * 1000).getHours() + 4;/*.toUTCString().replace( / GMT$/, "" ).getHours()*/
             var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getHours();
             if(hour >= 9 && hour <= 18){
                 console.log('Working...');
@@ -135,11 +134,7 @@ function saveVals(){
                     valoresDolarHoyObj.save(
                         function (err) { 
                             if (err) { onError('Error on save!'); }
-<<<<<<< HEAD
-                            else { console.log ('Saved!'); }
-=======
-                            else { onError('Saved!'); }
->>>>>>> working witha  strange layout
+                            else { onError ('Saved!'); }
                             }
                     )} 
                 });
