@@ -1,28 +1,32 @@
-!!! 5
+!!!
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/css/bootstrap.css')
-    link(rel='stylesheet', href='/css/bootstrap-responsive.min.css')
+  include inc/header
+
   body
+    div.navbar.navbar-fixed-top
+      div.navbar-inner
+        div.container
+          a(data-toggle='collapse', data-target='.nav-collapse').btn.btn-navbar
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a(href='#').brand #{brand}
+          ul.nav
+            - var obj = { 'home':'Home', 'about':'About' }
+              - each val, key in obj
+                - if (id == key)
+                  li.active
+                    a(href='#{key}') #{val}
+                - else            
+                  li
+                    a(href='#{key}') #{val}
 
-   header.site-header
-     a.logo(href='/', title='My name up in lights!') Express, Jade and Stylus
-       nav.site-nav
-         ul.nav
-           li.current
-             a(href='/', title='Home') Home
-           li
-             a(href='/about', title='Read a little about Express') About
-           li
-             a(href='/writing', title='Find more articles I have written in Express') Writing
-           li
-             a(href='/work', title='Find more projects I have worked on') Work
-           li
-            a(href='/contact', title='Send me a message or find me elsewhere') Contact
+    div.container!= body
     
-    block content
 
-p
-  | Created by 
-  a(href='http://thinkphp.ro') Gerardo Grimaldi
+    include inc/footer
+
+    include inc/scripts
+	
+	
+	    block content

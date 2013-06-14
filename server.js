@@ -30,9 +30,13 @@ app.configure(function(){
     
 function main(){
     if (work) {
-        var day = new Date( new Date().getTime() + offset * 3600 * 1000).getDay();//var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" ).getDay();//;
+        var day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getDay();//var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" ).getDay();//;
         if(day !== 0 && day !== 6){
+<<<<<<< HEAD
             var hour = new Date( new Date().getUTCDate() + offset * 3600 * 1000).getHours() + 4;/*.toUTCString().replace( / GMT$/, "" ).getHours()*/
+=======
+            var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getHours();
+>>>>>>> working witha  strange layout
             console.log(hour);
             if(hour >= 9 && hour <= 18){
                 console.log('Working...');
@@ -135,7 +139,11 @@ function saveVals(){
                     valoresDolarHoyObj.save(
                         function (err) { 
                             if (err) { onError('Error on save!'); }
+<<<<<<< HEAD
                             else { console.log ('Saved!'); }
+=======
+                            else { onError('Saved!'); }
+>>>>>>> working witha  strange layout
                             }
                     )} 
                 });
@@ -157,7 +165,7 @@ function onError(err) {
 }
 
 app.get('/',function(req, res){
-  res.render('index', { title: 'Express' });
+  res.render('home', { title: 'Dolar Hoy' });
 });
 
 app.get('/start/:pass', function(req, res) {
