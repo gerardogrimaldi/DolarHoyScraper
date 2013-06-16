@@ -156,7 +156,9 @@ function onError(err) {
 }
 
 app.get('/',function(req, res){
-  res.render('home', { title: 'Dolar Hoy' });
+    var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
+    console.log(dateBA);
+    res.render('home', { title: 'Dolar Hoy' });
 });
 
 app.get('/start/:pass', function(req, res) {
