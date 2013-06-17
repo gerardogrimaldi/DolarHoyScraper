@@ -11,7 +11,7 @@ var compraDolar;
 var ventaDolar;
 var compraEuro;
 var ventaEuro;
-var intervalTime = 600000;//900000;
+var intervalTime = 900000;
 var work = false;
 var offset = -3;
 
@@ -31,7 +31,7 @@ app.configure(function(){
 function main(){
     if (work) {
         var day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getDay();//var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" ).getDay();//;
-        if(day !== 0 /*&& day !==6*/ ){
+        if(day !== 0 && day !==6 ){
             var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getHours();
             if(hour >= 9 && hour <= 18){
                 console.log('Working...');
@@ -156,14 +156,14 @@ function onError(err) {
 }
 
 app.get('/',function(req, res){
-    var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
-    console.log(dateBA);
     res.render('home', { title: 'Dolar Hoy' });
 });
 
 app.get('/start/:pass', function(req, res) {
     if(req.params.pass != 'Hola123!'){return res.send('Error: Wrong password...');}
     try{
+        var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
+        console.log(dateBA);
         work = true;
         main();
         return res.send('Starting the server stand by...');
