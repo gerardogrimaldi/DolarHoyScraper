@@ -35,7 +35,11 @@ function main(){
             var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getHours();
             if(hour >= 9 && hour <= 18){
                 console.log('Working...');
-                try { worker(); }
+                try { 
+					var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
+					console.log(dateBA);
+					worker(); 
+				}
                 catch (Err) { onError(Err); }
             } else { console.log('Not Working hours...'); }
         } else { console.log('No Working Weekday...'); }
@@ -57,7 +61,7 @@ function worker(){
         }
     }]);
     c.queue([{
-        "uri":"http://ambito.com/economia/mercados/monedas/euro/",
+        "uri": "http://www.ambito.com/economia/mercados/monedas/euro/?ric=EUR=X",//"http://ambito.com/economia/mercados/monedas/euro/",
         "jQuery":false,
         "callback":function(error,result) {
             if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
@@ -79,6 +83,9 @@ function getValuesDolar(resultString){
     var $ = jquery.create(window);
     compraDolar = $('.bonosPrincipal.dolarPrincipal .floatleft .ultimo').text().split("COMPRA");
     ventaDolar = $('.bonosPrincipal.dolarPrincipal .floatleft .cierreAnterior').text().split("VENTA");
+    if(compraDolar === "" && ventaDolar === "") {
+        onError("Ambito esta caido FIJATE!");
+    }
     saveVals();
 }
 
@@ -92,6 +99,9 @@ function getValuesEuro(resultString){
     var $ = jquery.create(window);
     compraEuro = $('#compra big').text();
     ventaEuro = $('#venta big').text();
+    if(compraEuro === "" && ventaEuro === "") {
+        onError("Ambito esta caido FIJATE!");
+    }
     saveVals();
 }
 
@@ -133,8 +143,8 @@ function saveVals(){
                     doc.euroVenta != valoresDolarHoyObj.euroVenta ) {
                     valoresDolarHoyObj.save(
                         function (err) { 
-                            if (err) { onError('Error on save!'); }
-                            else { onError ('Saved!'); }
+                            if (err) { console.log('Error on save!'); }
+                            else { console.log ('Saved!'); }
                             }
                     )} 
                 });
@@ -156,14 +166,14 @@ function onError(err) {
 }
 
 app.get('/',function(req, res){
+    var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
+    console.log(dateBA);
     res.render('home', { title: 'Dolar Hoy' });
 });
 
 app.get('/start/:pass', function(req, res) {
     if(req.params.pass != 'Hola123!'){return res.send('Error: Wrong password...');}
     try{
-        var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
-        console.log(dateBA);
         work = true;
         main();
         return res.send('Starting the server stand by...');
