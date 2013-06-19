@@ -35,11 +35,7 @@ function main(){
             var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getHours();
             if(hour >= 9 && hour <= 18){
                 console.log('Working...');
-                try { 
-					var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
-					console.log(dateBA);
-					worker(); 
-				}
+                try { worker(); }
                 catch (Err) { onError(Err); }
             } else { console.log('Not Working hours...'); }
         } else { console.log('No Working Weekday...'); }
@@ -50,7 +46,7 @@ function main(){
 function worker(){
     var c = new Crawler({"maxConnections":10, "callback":function(error,result,$) {}});
     c.queue([{
-        "uri":"http://ambito.com/economia/mercados/monedas/dolar/",
+        "uri":"http://www.ambito.com/economia/mercados/monedas/dolar/",
         "jQuery":false,
         "callback":function(error,result) {
             if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
