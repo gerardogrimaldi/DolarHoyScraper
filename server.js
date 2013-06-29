@@ -1,5 +1,6 @@
 var mongoose = require ("mongoose"); ///http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
-var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://dolarhoy:Traserito#321!@widmore.mongohq.com:10010/dolarhoydb';
+var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://dolarhoy:Traserito#321!@ds051447.mongolab.com:51447/dolarhoydb'
+//'mongodb://dolarhoy:Traserito#321!@widmore.mongohq.com:10010/dolarhoydb';
 var Crawler = require("crawler").Crawler;
 var express = require('express');
 var jquery = require('jquery');
