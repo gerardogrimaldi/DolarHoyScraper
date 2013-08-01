@@ -1,5 +1,5 @@
 var mongoose = require ("mongoose"); ///http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
-var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://dolarhoy:Traserito#321!@ds051447.mongolab.com:51447/dolarhoydb'
+var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://dolarhoy:Traserito#321!@ds051447.mongolab.com:51447/dolarhoydb';
 //'mongodb://dolarhoy:Traserito#321!@widmore.mongohq.com:10010/dolarhoydb';
 var Crawler = require("crawler").Crawler;
 var express = require('express');
@@ -12,6 +12,8 @@ var compraDolar;
 var ventaDolar;
 var compraEuro;
 var ventaEuro;
+var compraReal;
+var ventaReal;
 var intervalTime = 900000;
 var work = false;
 var offset = -3;
@@ -68,6 +70,33 @@ function worker(){
             }   
        }
     }]);
+    c.queue([{
+        "uri": "http://www.ambito.com/economia/mercados/monedas/info/?ric=BRL=X",
+        "jQuery":false,
+        "callback":function(error,result) {
+            if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
+            if(result.body.length > 0){
+                getValuesReal(result.body.toString());
+                console.log("Grabbed Real ", result.body.length, "bytes");
+            }   
+       }
+    }]);
+}
+
+function getValuesReal(resultString){
+    var window = require('jsdom').jsdom(resultString, null, {
+            FetchExternalResources: false,
+            ProcessExternalResources: false,
+            MutationEvents: false,
+            QuerySelector: false
+    }).createWindow();
+    var $ = jquery.create(window);
+    compraReal = $('#compra big').text();
+    ventaReal = $('#venta big').text();
+    if(compraReal === "" && ventaReal === "") {
+        onError("Ambito esta caido FIJATE!");
+    }
+    saveVals();
 }
 
 function getValuesDolar(resultString){
@@ -104,7 +133,7 @@ function getValuesEuro(resultString){
 
 function saveVals(){
     try{
-        if (compraDolar !== undefined && ventaDolar !== undefined && compraEuro !== undefined && ventaEuro !== undefined){
+        if (compraDolar !== undefined && ventaDolar !== undefined && compraReal !== undefined && ventaReal !== undefined && compraEuro !== undefined && ventaEuro !== undefined){
             var dolarTarjeta;
             var valoresDolarHoyObj;
             var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
@@ -121,13 +150,15 @@ function saveVals(){
                 dolarBlueCompra : compraDolar[1].replace(",","."),
                 dolarBlueVenta : ventaDolar[1].replace(",","."),
                 dolarTarjeta : dolarTarjeta,
+                realCompra : compraReal.replace(",","."),
+                realVenta : ventaReal.replace(",","."),
                 euroCompra : compraEuro.replace(",","."),
                 euroVenta : ventaEuro.replace(",","."),
                 date : dateBA
             });
             
             Valores.findOne()
-            .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta euroCompra euroVenta date')
+            .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta realCompra realVenta euroCompra euroVenta date')
             .sort('-date')
             .exec(
                 function (err, doc) {
@@ -136,6 +167,8 @@ function saveVals(){
                     doc.dolarVenta != valoresDolarHoyObj.dolarVenta ||
                     doc.dolarBlueCompra != valoresDolarHoyObj.dolarBlueCompra ||
                     doc.dolarBlueVenta != valoresDolarHoyObj.dolarBlueVenta ||
+                    doc.realCompra != valoresDolarHoyObj.realCompra ||
+                    doc.realVenta != valoresDolarHoyObj.realVenta ||
                     doc.euroCompra != valoresDolarHoyObj.euroCompra ||
                     doc.euroVenta != valoresDolarHoyObj.euroVenta ) {
                     valoresDolarHoyObj.save(
@@ -147,6 +180,8 @@ function saveVals(){
                 });
             compraDolar = undefined;
             ventaDolar = undefined;
+            compraReal = undefined;
+            ventaReal = undefined; 
             compraEuro = undefined;
             ventaEuro = undefined; 
         }
