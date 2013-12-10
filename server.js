@@ -138,7 +138,7 @@ function saveVals(){
             var valoresDolarHoyObj;
             var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" );
             console.log(dateBA);
-            dolarTarjeta = parseFloat(ventaDolar[0].replace(",",".")) + (parseFloat(ventaDolar[0].replace(",",".")) * 20 /100);
+            dolarTarjeta = parseFloat(ventaDolar[0].replace(",",".")) + (parseFloat(ventaDolar[0].replace(",",".")) * 35 /100);
             dolarTarjeta = dolarTarjeta.toFixed(3);
             mongoose.connect(uristring, function (err, res) {
                 if (err) { console.log ('ERROR connecting to: ' + uristring + '. ' + err); } 
