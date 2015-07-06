@@ -1,5 +1,6 @@
 var mongoose = require ("mongoose"); ///http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
-var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://dolarhoy:Traserito#321!@ds051447.mongolab.com:51447/dolarhoydb';
+var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL
+|| 'mongodb://dolarhoy:Traserito#321!@ds053380.mongolab.com:53380/dolathoydb2'
 //'mongodb://dolarhoy:Traserito#321!@widmore.mongohq.com:10010/dolarhoydb';
 var Crawler = require("crawler").Crawler;
 var express = require('express');
@@ -30,20 +31,20 @@ app.configure(function(){
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
-    
+
 function main(){
-    if (work) {
-        var day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getDay();//var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" ).getDay();//;
-        if(day !== 0 && day !==6 ){
-            var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getHours();
-            if(hour >= 9 && hour <= 18){
-                console.log('Working...');
-                try { worker(); }
-                catch (Err) { onError(Err); }
-            } else { console.log('Not Working hours...'); }
-        } else { console.log('No Working Weekday...'); }
-    }
-    setTimeout(main, intervalTime);
+  if (work) {
+    var day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getDay();//var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" ).getDay();//;
+    if(day !== 0 && day !==6 ){
+      var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, "" )).getHours();
+      if(hour >= 9 && hour <= 18){
+        console.log('Working...');
+        try { worker(); }
+        catch (Err) { onError(Err); }
+    } else { console.log('Not Working hours...'); }
+    } else { console.log('No Working Weekday...'); }
+  }
+  setTimeout(main, intervalTime);
 }
 
 function worker(){
@@ -56,7 +57,7 @@ function worker(){
             if(result.body.length > 0){
                 getValuesDolar(result.body.toString());
                 console.log("Grabbed Dolar ", result.body.length, "bytes");
-            }   
+            }
         }
     }]);
     c.queue([{
@@ -67,7 +68,7 @@ function worker(){
             if(result.body.length > 0){
                 getValuesEuro(result.body.toString());
                 console.log("Grabbed Euro ", result.body.length, "bytes");
-            }   
+            }
        }
     }]);
     c.queue([{
@@ -78,7 +79,7 @@ function worker(){
             if(result.body.length > 0){
                 getValuesReal(result.body.toString());
                 console.log("Grabbed Real ", result.body.length, "bytes");
-            }   
+            }
        }
     }]);
 }
@@ -141,7 +142,7 @@ function saveVals(){
             dolarTarjeta = parseFloat(ventaDolar[0].replace(",",".")) + (parseFloat(ventaDolar[0].replace(",",".")) * 35 /100);
             dolarTarjeta = dolarTarjeta.toFixed(3);
             mongoose.connect(uristring, function (err, res) {
-                if (err) { console.log ('ERROR connecting to: ' + uristring + '. ' + err); } 
+                if (err) { console.log ('ERROR connecting to: ' + uristring + '. ' + err); }
                 else { console.log ('Succeeded connected to: ' + uristring); }
             });
             valoresDolarHoyObj = new Valores ({
@@ -156,7 +157,7 @@ function saveVals(){
                 euroVenta : ventaEuro.replace(",","."),
                 date : dateBA
             });
-            
+
             Valores.findOne()
             .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta realCompra realVenta euroCompra euroVenta date')
             .sort('-date')
@@ -172,18 +173,18 @@ function saveVals(){
                     doc.euroCompra != valoresDolarHoyObj.euroCompra ||
                     doc.euroVenta != valoresDolarHoyObj.euroVenta ) {
                     valoresDolarHoyObj.save(
-                        function (err) { 
+                        function (err) {
                             if (err) { console.log('Error on save!'); }
                             else { console.log ('Saved!'); }
                             }
-                    )} 
+                    )}
                 });
             compraDolar = undefined;
             ventaDolar = undefined;
             compraReal = undefined;
-            ventaReal = undefined; 
+            ventaReal = undefined;
             compraEuro = undefined;
-            ventaEuro = undefined; 
+            ventaEuro = undefined;
         }
     }
     catch(err){ onError(err); }
@@ -211,12 +212,12 @@ app.get('/start/:pass', function(req, res) {
         return res.send('Starting the server stand by...');
     } catch(err) { onError(err); }
 });
-    
+
 app.get('/forcestart/:pass', function(req, res) {
     if (req.params.pass != 'Hola123!') { return res.send('Error: Wrong password...'); }
     try{
         worker();
-        return res.send('Done...');  
+        return res.send('Done...');
     } catch(err) { onError(err); }
 });
 
