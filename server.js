@@ -6,7 +6,12 @@ var jquery = require('jquery');
 var mail = require('./nodemail');
 var valoresSchema = require('./Model/mongoSchema').valoresDolarHoySchema;
 var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
-var compraDolar, ventaDolar, compraEuro, ventaEuro, compraReal, ventaReal;
+var compraDolar;
+var ventaDolar;
+var compraEuro;
+var ventaEuro;
+var compraReal;
+var ventaReal;
 var intervalTime = 900000;
 var work = false;
 var offset = -3;
@@ -138,6 +143,7 @@ function getValuesEuro(resultString){
 
 function saveVals(){
   try {
+
     if (compraDolar && ventaDolar && compraReal && ventaReal && compraEuro && ventaEuro){
       var dolarTarjeta;
       var valoresDolarHoyObj;
