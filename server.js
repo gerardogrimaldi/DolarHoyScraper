@@ -3,8 +3,8 @@ var uriString = process.env.MONGOLAB_URI;
 var Crawler = require('crawler').Crawler;
 var express = require('express');
 var jquery = require('jquery');
-var mail = require('./nodemail');
-var valoresSchema = require('./model/mongoSchema').valoresDolarHoySchema;
+var mail = require('nodemail');
+var valoresSchema = require('model/mongoSchema.js').valoresDolarHoySchema;
 var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
 var compraDolar;
 var ventaDolar;
@@ -150,16 +150,16 @@ function saveVals(){
       dolarTarjeta = parseFloat(ventaDolar[0].replace(',','.')) + (parseFloat(ventaDolar[0].replace(',','.')) * 35 /100);
       dolarTarjeta = dolarTarjeta.toFixed(3);
       valoresDolarHoyObj = new Valores ({
-          dolarCompra : compraDolar[0].replace(',','.'),
-          dolarVenta : ventaDolar[0].replace(',','.'),
-          dolarBlueCompra : compraDolar[1].replace(',','.'),
-          dolarBlueVenta : ventaDolar[1].replace(',','.'),
-          dolarTarjeta : dolarTarjeta,
-          realCompra : compraReal.replace(',','.'),
-          realVenta : ventaReal.replace(',','.'),
-          euroCompra : compraEuro.replace(',','.'),
-          euroVenta : ventaEuro.replace(',','.'),
-          date : dateBA
+        dolarCompra : compraDolar[0].replace(',','.'),
+        dolarVenta : ventaDolar[0].replace(',','.'),
+        dolarBlueCompra : compraDolar[1].replace(',','.'),
+        dolarBlueVenta : ventaDolar[1].replace(',','.'),
+        dolarTarjeta : dolarTarjeta,
+        realCompra : compraReal.replace(',','.'),
+        realVenta : ventaReal.replace(',','.'),
+        euroCompra : compraEuro.replace(',','.'),
+        euroVenta : ventaEuro.replace(',','.'),
+        date : dateBA
       });
 
       Valores.findOne()
