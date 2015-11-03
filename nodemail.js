@@ -3,8 +3,8 @@ var nodemailer = require("nodemailer");
 var smtpTransport = nodemailer.createTransport("SMTP",{
     service: "Gmail",
     auth: {
-        user: "grimaldi.gerardo@gmail.com",
-        pass: ""
+        user: process.env.MAIL_USR,
+        pass: process.env.MAIL_PASS
     }
 });
 
@@ -20,12 +20,10 @@ exports.mailOptions = mailOptions;
 
 exports.sendMail = function () {
     smtpTransport.sendMail(mailOptions, function(error, response){
-        if(error){
+        if (error) {
             console.log(error);
-        }else{
+        } else {
             console.log("Message sent: " + response.message);
         }
-        /* if you don't want to use this transport object anymore, uncomment following line
-        //smtpTransport.close(); // shut down the connection pool, no more messages*/
-    });    
+    });
 };
