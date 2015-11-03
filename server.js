@@ -143,8 +143,13 @@ function getValuesEuro(resultString){
 
 function saveVals(){
   try {
-
-    if (compraDolar && ventaDolar && compraReal && ventaReal && compraEuro && ventaEuro){
+    /*console.log(compraDolar);
+    console.log(ventaDolar);
+    console.log(compraReal);
+    console.log(ventaReal);
+    console.log(compraEuro);
+    console.log(ventaEuro);*/
+    if (compraDolar !== undefined && ventaDolar !== undefined && compraReal !== undefined && ventaReal !== undefined && compraEuro !== undefined && ventaEuro !== undefined){
       var dolarTarjeta;
       var valoresDolarHoyObj;
       var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' );
