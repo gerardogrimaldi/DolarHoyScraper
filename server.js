@@ -6,12 +6,7 @@ var jquery = require('jquery');
 var mail = require('./nodemail');
 var valoresSchema = require('./Model/mongoSchema').valoresDolarHoySchema;
 var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
-var compraDolar;
-var ventaDolar;
-var compraEuro;
-var ventaEuro;
-var compraReal;
-var ventaReal;
+var compraDolar, ventaDolar, compraEuro, ventaEuro, compraReal, ventaReal;
 var intervalTime = 900000;
 var work = false;
 var offset = -3;
@@ -206,10 +201,6 @@ function onError(err) {
   console.log(err);
 }
 
-app.get('/',function(req, res) {
-  res.render('home', { title: 'Dolar Hoy' });
-});
-
 app.get('/start/:pass', function(req, res) {
     if (req.params.pass !== 'Hola123!') {
       return res.send('Error: Wrong password...');
@@ -243,7 +234,7 @@ app.get('/stop/:pass', function(req, res) {
     work = false;
     main();
     return res.send('Stoping the server...');
-  } catch(err) {
+  } catch (err) {
     onError(err);
   }
 });
