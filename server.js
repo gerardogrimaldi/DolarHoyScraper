@@ -183,15 +183,25 @@ function saveVals(){
       .sort('-date')
       .exec(
         function (err, doc) {
-          if (err) { return onError(err); }
-          if (doc.dolarCompra != valoresDolarHoyObj.dolarCompra ||
-            doc.dolarVenta != valoresDolarHoyObj.dolarVenta ||
-            doc.dolarBlueCompra != valoresDolarHoyObj.dolarBlueCompra ||
-            doc.dolarBlueVenta != valoresDolarHoyObj.dolarBlueVenta ||
-            doc.realCompra != valoresDolarHoyObj.realCompra ||
-            doc.realVenta != valoresDolarHoyObj.realVenta ||
-            doc.euroCompra != valoresDolarHoyObj.euroCompra ||
-            doc.euroVenta != valoresDolarHoyObj.euroVenta) {
+          if (err) {
+            return onError(err);
+          }
+          console.log(doc.dolarCompra !== valoresDolarHoyObj.dolarCompra ||
+              doc.dolarVenta !== valoresDolarHoyObj.dolarVenta ||
+              doc.dolarBlueCompra !== valoresDolarHoyObj.dolarBlueCompra ||
+              doc.dolarBlueVenta !== valoresDolarHoyObj.dolarBlueVenta ||
+              doc.realCompra !== valoresDolarHoyObj.realCompra ||
+              doc.realVenta !== valoresDolarHoyObj.realVenta ||
+              doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
+              doc.euroVenta !== valoresDolarHoyObj.euroVenta);
+          if (doc.dolarCompra !== valoresDolarHoyObj.dolarCompra ||
+            doc.dolarVenta !== valoresDolarHoyObj.dolarVenta ||
+            doc.dolarBlueCompra !== valoresDolarHoyObj.dolarBlueCompra ||
+            doc.dolarBlueVenta !== valoresDolarHoyObj.dolarBlueVenta ||
+            doc.realCompra !== valoresDolarHoyObj.realCompra ||
+            doc.realVenta !== valoresDolarHoyObj.realVenta ||
+            doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
+            doc.euroVenta !== valoresDolarHoyObj.euroVenta) {
           valoresDolarHoyObj.save(
             function (err) {
               if (err) {
