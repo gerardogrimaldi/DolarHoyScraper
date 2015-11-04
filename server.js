@@ -108,6 +108,7 @@ function getValuesReal(resultString){
   if(compraReal === '' && ventaReal === '') {
     onError('Ambito esta caido FIJATE!');
   }
+  console.log('real');
   saveVals();
 }
 
@@ -126,6 +127,7 @@ function getValuesDolar(resultString){
   if(compraDolar === '' && ventaDolar === '') {
     onError('Ambito esta caido FIJATE!');
   }
+  console.log('dolar');
   saveVals();
 }
 
@@ -144,6 +146,7 @@ function getValuesEuro(resultString){
   if(compraEuro === '' && ventaEuro === '') {
     onError('Ambito esta caido FIJATE!');
   }
+  console.log('euro');
   saveVals();
 }
 
