@@ -149,12 +149,13 @@ function getValuesEuro(resultString){
 
 function saveVals(){
   try {
-    /*console.log(compraDolar);
+    console.log('deaca');
+    console.log(compraDolar);
     console.log(ventaDolar);
     console.log(compraReal);
     console.log(ventaReal);
     console.log(compraEuro);
-    console.log(ventaEuro);*/
+    console.log(ventaEuro);
     if (compraDolar !== undefined && ventaDolar !== undefined && compraReal !== undefined && ventaReal !== undefined && compraEuro !== undefined && ventaEuro !== undefined){
       var dolarTarjeta;
       var valoresDolarHoyObj;
