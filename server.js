@@ -159,60 +159,54 @@ function saveVals(){
     console.log(ventaReal);
     console.log(compraEuro);
     console.log(ventaEuro);
-    if (compraDolar !== undefined && ventaDolar !== undefined && compraReal !== undefined && ventaReal !== undefined && compraEuro !== undefined && ventaEuro !== undefined){
+    if (compraDolar !== undefined && ventaDolar !== undefined && compraReal !== undefined && ventaReal !== undefined && compraEuro !== undefined && ventaEuro !== undefined) {
       var dolarTarjeta;
       var valoresDolarHoyObj;
-      var dateBA = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' );
-      dolarTarjeta = parseFloat(ventaDolar[0].replace(',','.')) + (parseFloat(ventaDolar[0].replace(',','.')) * 35 /100);
+      var dateBA = new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace(/ GMT$/, '');
+      dolarTarjeta = parseFloat(ventaDolar[0].replace(',', '.')) + (parseFloat(ventaDolar[0].replace(',', '.')) * 35 / 100);
       dolarTarjeta = dolarTarjeta.toFixed(3);
-      valoresDolarHoyObj = new Valores ({
-        dolarCompra : compraDolar[0].replace(',','.'),
-        dolarVenta : ventaDolar[0].replace(',','.'),
-        dolarBlueCompra : compraDolar[1].replace(',','.'),
-        dolarBlueVenta : ventaDolar[1].replace(',','.'),
-        dolarTarjeta : dolarTarjeta,
-        realCompra : compraReal.replace(',','.'),
-        realVenta : ventaReal.replace(',','.'),
-        euroCompra : compraEuro.replace(',','.'),
-        euroVenta : ventaEuro.replace(',','.'),
-        date : dateBA
+      valoresDolarHoyObj = new Valores({
+        dolarCompra: compraDolar[0].replace(',', '.'),
+        dolarVenta: ventaDolar[0].replace(',', '.'),
+        dolarBlueCompra: compraDolar[1].replace(',', '.'),
+        dolarBlueVenta: ventaDolar[1].replace(',', '.'),
+        dolarTarjeta: dolarTarjeta,
+        realCompra: compraReal.replace(',', '.'),
+        realVenta: ventaReal.replace(',', '.'),
+        euroCompra: compraEuro.replace(',', '.'),
+        euroVenta: ventaEuro.replace(',', '.'),
+        date: dateBA
       });
 
       Valores.findOne()
-      .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta realCompra realVenta euroCompra euroVenta date')
-      .sort('-date')
-      .exec(
-        function (err, doc) {
-          if (err) {
-            return onError(err);
-          }
-          console.log(doc.dolarCompra !== valoresDolarHoyObj.dolarCompra ||
-              doc.dolarVenta !== valoresDolarHoyObj.dolarVenta ||
-              doc.dolarBlueCompra !== valoresDolarHoyObj.dolarBlueCompra ||
-              doc.dolarBlueVenta !== valoresDolarHoyObj.dolarBlueVenta ||
-              doc.realCompra !== valoresDolarHoyObj.realCompra ||
-              doc.realVenta !== valoresDolarHoyObj.realVenta ||
-              doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
-              doc.euroVenta !== valoresDolarHoyObj.euroVenta);
-          if (doc.dolarCompra !== valoresDolarHoyObj.dolarCompra ||
-            doc.dolarVenta !== valoresDolarHoyObj.dolarVenta ||
-            doc.dolarBlueCompra !== valoresDolarHoyObj.dolarBlueCompra ||
-            doc.dolarBlueVenta !== valoresDolarHoyObj.dolarBlueVenta ||
-            doc.realCompra !== valoresDolarHoyObj.realCompra ||
-            doc.realVenta !== valoresDolarHoyObj.realVenta ||
-            doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
-            doc.euroVenta !== valoresDolarHoyObj.euroVenta) {
-          valoresDolarHoyObj.save(
-            function (err) {
-              if (err) {
-                console.log('Error on save!');
-              }
-              else {
-                console.log('Saved!');
-              }
+          .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta realCompra realVenta euroCompra euroVenta date')
+          .sort('-date')
+          .exec(
+          function (err, doc) {
+            if (err) {
+              return onError(err);
             }
-          )}
-        });
+            if (doc.dolarCompra !== valoresDolarHoyObj.dolarCompra ||
+                doc.dolarVenta !== valoresDolarHoyObj.dolarVenta ||
+                doc.dolarBlueCompra !== valoresDolarHoyObj.dolarBlueCompra ||
+                doc.dolarBlueVenta !== valoresDolarHoyObj.dolarBlueVenta ||
+                doc.realCompra !== valoresDolarHoyObj.realCompra ||
+                doc.realVenta !== valoresDolarHoyObj.realVenta ||
+                doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
+                doc.euroVenta !== valoresDolarHoyObj.euroVenta) {
+              valoresDolarHoyObj.save(
+                  function (err) {
+                    if (err) {
+                      console.log('Error on save!');
+                    }
+                    else {
+                      console.log('Saved!');
+                    }
+                  }
+              )
+            }
+          }
+      );
       compraDolar = undefined;
       ventaDolar = undefined;
       compraReal = undefined;
