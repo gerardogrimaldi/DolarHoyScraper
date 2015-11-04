@@ -103,6 +103,8 @@ function getValuesReal(resultString){
   var $ = jquery.create(window);
   compraReal = $('#compra big').text();
   ventaReal = $('#venta big').text();
+  console.log(compraReal);
+  console.log(ventaReal);
   if(compraReal === '' && ventaReal === '') {
     onError('Ambito esta caido FIJATE!');
   }
@@ -119,6 +121,8 @@ function getValuesDolar(resultString){
   var $ = jquery.create(window);
   compraDolar = $('.bonosPrincipal.dolarPrincipal .floatleft .ultimo').text().split('COMPRA');
   ventaDolar = $('.bonosPrincipal.dolarPrincipal .floatleft .cierreAnterior').text().split('VENTA');
+  console.log(compraDolar);
+  console.log(ventaDolar);
   if(compraDolar === '' && ventaDolar === '') {
     onError('Ambito esta caido FIJATE!');
   }
@@ -135,6 +139,8 @@ function getValuesEuro(resultString){
   var $ = jquery.create(window);
   compraEuro = $('#compra big').text();
   ventaEuro = $('#venta big').text();
+  console.log(compraEuro);
+  console.log(ventaEuro);
   if(compraEuro === '' && ventaEuro === '') {
     onError('Ambito esta caido FIJATE!');
   }
