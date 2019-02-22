@@ -1,22 +1,25 @@
-var mongoose = require ('mongoose'); ///http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
-var uriString = process.env.MONGOLAB_URI;
-var Crawler = require('crawler').Crawler;
-var express = require('express');
-var jquery = require('jquery');
-var mail = require('./nodemail');
-var valoresSchema = require('./Model/mongoSchema').valoresDolarHoySchema;
-var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
-var compraDolar;
-var ventaDolar;
-var compraEuro;
-var ventaEuro;
-var compraReal;
-var ventaReal;
-var intervalTime = 900000;
-var work = false;
-var offset = -3;
+const mongoose = require ('mongoose'); // http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
+const uriString = process.env.MONGOLAB_URI;
+const Crawler = require('crawler').Crawler;
+const express = require('express');
+const jquery = require('jquery');
+const mail = require('./nodemail');
+const bodyParser = require('body-parser');
+const valoresSchema = require('./model/mongoSchema').valoresDolarHoySchema;
+const Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
+let compraDolar;
+let ventaDolar;
+let compraEuro;
+let ventaEuro;
+let compraReal;
+let ventaReal;
+const intervalTime = 900000;
+let work = false;
+const offset = -3;
 
-mongoose.connect(uriString, function (err, res) {
+mongoose.connect(uriString, {
+    useNewUrlParser: true
+  }, function (err, res) {
   if (err) {
     console.log ('ERROR connecting to: ' + uriString + '. ' + err);
   } else {
@@ -26,13 +29,8 @@ mongoose.connect(uriString, function (err, res) {
 
 var app = express();
 
-app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-});
+app.set('port', process.env.PORT || 3000);
+app.use(bodyParser);
 
 function main() {
   if (work) {
@@ -59,7 +57,7 @@ function main() {
 function worker() {
   var c = new Crawler( {'maxConnections': 10, 'callback': function(error,result,$) {}});
   c.queue([{
-    'uri':'http://www.ambito.com/economia/mercados/monedas/dolar/',
+    'uri':'https://www.ambito.com/contenidos/dolar.html',
     'jQuery':false,
     'callback':function(error,result) {
       if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
@@ -70,7 +68,7 @@ function worker() {
     }
   }]);
   c.queue([{
-    'uri': 'http://www.ambito.com/economia/mercados/monedas/euro/?ric=EUR=X',//'http://ambito.com/economia/mercados/monedas/euro/',
+    'uri': 'https://www.ambito.com/contenidos/euro.html',//'http://ambito.com/economia/mercados/monedas/euro/',
     'jQuery':false,
     'callback':function(error,result) {
       if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
@@ -222,7 +220,7 @@ function saveVals(){
 function onError(err) {
   mail.mailOptions.subject = 'DolarHoyServer Info: Error';
   mail.mailOptions.html = 'ERROR connecting to: ' + uriString + '. ' + err;
-  mail.sendMail();
+  // mail.sendMail();
   console.log(err);
 }
 

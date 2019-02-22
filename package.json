@@ -2,16 +2,16 @@
     "name": "DolarHoyScraper",
     "version": "0.0.1",
     "dependencies": {
-        "express": "3.1.x",
-        "mongodb": "1.3.6",
+        "body-parser": "^1.18.3",
+        "crawler": "1.2.0",
+        "express": "4.16.x",
+        "jade": "1.11.0",
+        "jquery": "3.3",
+        "jsdom": "13.2.0",
+        "mongodb": "3.1.13",
         "mongoose": ">=4.1.11",
-        "jsdom": "0.6.2",
-        "request": "2.21.0",
-        "jquery": "1.6",
-        "nodemailer" : "0.4.4",
-        "crawler": "0.2.4",
-        "jade": "0.31.1",
-        "request": "2.21.0"
+        "nodemailer": "^5.1.1",
+        "request": "2.88.0"
     },
     "engines": {
         "node": "0.10.x",
