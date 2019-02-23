@@ -33,7 +33,7 @@ app.set('port', process.env.PORT || 3000);
 function main() {
   if (work) {
     let day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' )).getDay(); // var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' ).getDay();//;
-    if (true /*day !== 0 && day !==6*/) {
+    if (day !== 0 && day !==6) {
       let hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' )).getHours();
       if (hour >= 9 && hour <= 18) {
         console.log('Working...');
