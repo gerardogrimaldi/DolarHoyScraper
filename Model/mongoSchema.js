@@ -1,16 +1,13 @@
-var mongoose = require ("mongoose");
+const mongoose = require ('mongoose');
 
-var valoresDolarHoySchema = new mongoose.Schema({
-    dolarCompra : String,
-    dolarVenta : String,
-    dolarBlueCompra : String,
-    dolarBlueVenta : String,
-    dolarTarjeta : String,
-    realCompra : String,
-    realVenta : String,
-    euroCompra : String,
-    euroVenta : String,
-    date : Date
+const valoresDolarHoySchema = new mongoose.Schema({
+	dolarCompra: String,
+	dolarVenta: String,
+	euroCompra: String,
+	euroVenta: String,
+	realCompra: String,
+	realVenta: String,
+	date: Date
 });
 
 exports.valoresDolarHoySchema = valoresDolarHoySchema;
