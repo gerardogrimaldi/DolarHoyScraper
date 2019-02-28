@@ -1,12 +1,12 @@
-const mongoose = require ('mongoose'); // http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
+const mongoose = import('mongoose'); // http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
 const uriString = process.env.MONGOLAB_URI;
-const express = require('express');
-const $ = require('cheerio');
-const mail = require('./nodemail');
-let valoresSchema = require('./model/mongoSchema').valoresDolarHoySchema;
+const express = import('express');
+const $ = import('cheerio');
+const mail = import('./nodemail');
+let valoresSchema = import('./model/mongoSchema').valoresDolarHoySchema;
 const Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
 const offset = -3;
-const rp = require('request-promise');
+const rp = import('request-promise');
 const intervalTime = 900000;
 let dolarCompra;
 let dolarVenta;
@@ -16,17 +16,17 @@ let realCompra;
 let realVenta;
 let work = false;
 
-
 mongoose.connect(uriString, { useNewUrlParser: true }, 
   function (err, res) {
   if (err) {
-    console.log ('ERROR connecting to: ' + uriString + '. ' + err);
+    console.log(res);
+    console.log('ERROR connecting to: ' + uriString + '. ' + err);
   } else {
-    console.log ('Succeeded connected to: ' + uriString);
+    console.log('Succeeded connected to: ' + uriString);
   }
 });
 
-var app = express();
+let app = express();
 
 app.set('port', process.env.PORT || 3000);
 
