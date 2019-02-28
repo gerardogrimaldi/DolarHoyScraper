@@ -1,22 +1,24 @@
-var mongoose = require ('mongoose'); ///http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
-var uriString = process.env.MONGOLAB_URI;
-var Crawler = require('crawler').Crawler;
-var express = require('express');
-var jquery = require('jquery');
-var mail = require('./nodemail');
-var valoresSchema = require('./Model/mongoSchema').valoresDolarHoySchema;
-var Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
-var compraDolar;
-var ventaDolar;
-var compraEuro;
-var ventaEuro;
-var compraReal;
-var ventaReal;
-var intervalTime = 900000;
-var work = false;
-var offset = -3;
+const mongoose = require ('mongoose'); // http://stackoverflow.com/questions/9119648/securing-my-node-js-apps-rest-api///http://comments.gmane.org/gmane.comp.lang.javascript.nodejs/55287///http://stackoverflow.com/questions/16159063/how-to-secure-restful-route-in-backbone-and-express
+const uriString = process.env.MONGOLAB_URI;
+const express = require('express');
+const $ = require('cheerio');
+const mail = require('./nodemail');
+let valoresSchema = require('./model/mongoSchema').valoresDolarHoySchema;
+const Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
+const offset = -3;
+const rp = require('request-promise');
+const intervalTime = 900000;
+let dolarCompra;
+let dolarVenta;
+let euroCompra;
+let euroVenta;
+let realCompra;
+let realVenta;
+let work = false;
 
-mongoose.connect(uriString, function (err, res) {
+
+mongoose.connect(uriString, { useNewUrlParser: true }, 
+  function (err, res) {
   if (err) {
     console.log ('ERROR connecting to: ' + uriString + '. ' + err);
   } else {
@@ -26,19 +28,13 @@ mongoose.connect(uriString, function (err, res) {
 
 var app = express();
 
-app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-});
+app.set('port', process.env.PORT || 3000);
 
 function main() {
   if (work) {
-    var day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' )).getDay();//var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' ).getDay();//;
-    if (day !== 0 && day !==6 ) {
-      var hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' )).getHours();
+    let day = new Date(new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' )).getDay(); // var day = new Date( new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' ).getDay();//;
+    if (day !== 0 && day !==6) {
+      let hour = new Date(new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace( / GMT$/, '' )).getHours();
       if (hour >= 9 && hour <= 18) {
         console.log('Working...');
         try {
@@ -47,139 +43,69 @@ function main() {
           onError(Err);
         }
       } else {
-        console.log('Not Working hours...');
+        console.log('Not working hours...');
       }
     } else {
-      console.log('No Working Weekday...');
+      console.log('No working day...');
     }
   }
   setTimeout(main, intervalTime);
 }
 
 function worker() {
-  var c = new Crawler( {'maxConnections': 10, 'callback': function(error,result,$) {}});
-  c.queue([{
-    'uri':'http://www.ambito.com/economia/mercados/monedas/dolar/',
-    'jQuery':false,
-    'callback':function(error,result) {
-      if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
-      if(result.body.length > 0){
-        getValuesDolar(result.body.toString());
-        console.log('Grabbed Dolar ', result.body.length, 'bytes');
-      }
-    }
-  }]);
-  c.queue([{
-    'uri': 'http://www.ambito.com/economia/mercados/monedas/euro/?ric=EUR=X',//'http://ambito.com/economia/mercados/monedas/euro/',
-    'jQuery':false,
-    'callback':function(error,result) {
-      if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
-      if(result.body.length > 0){
-        getValuesEuro(result.body.toString());
-        console.log('Grabbed Euro ', result.body.length, 'bytes');
-      }
-   }
-  }]);
-  c.queue([{
-    'uri': 'http://www.ambito.com/economia/mercados/monedas/info/?ric=BRL=X',
-    'jQuery':false,
-    'callback':function(error,result) {
-      if(error && error.response.statusCode !== 200) { console.log('Request error.'); }
-      if(result.body.length > 0){
-        getValuesReal(result.body.toString());
-        console.log('Grabbed Real ', result.body.length, 'bytes');
-      }
-   }
-  }]);
-}
+	let urlDollar = 'http://www.dolarhoy.com/';
+	rp(urlDollar)
+		.then(function (html) {
+			//success!
+			let dolarCompraHtml = $('.col-md-6.compra span', html);
+			let dolarVentaHtml = $('.col-md-6.venta span', html);
+			let tablesLower = $('.table-responsive td', html);
 
-function getValuesReal(resultString){
-  var window = require('jsdom').jsdom(resultString, null, {
-    FetchExternalResources: false,
-    ProcessExternalResources: false,
-    MutationEvents: false,
-    QuerySelector: false
-  }).createWindow();
-  var $ = jquery.create(window);
-  compraReal = $('#compra big').text();
-  ventaReal = $('#venta big').text();
-  console.log(compraReal);
-  console.log(ventaReal);
-  if(compraReal === '' && ventaReal === '') {
-    onError('Ambito esta caido FIJATE!');
-  }
-  console.log('real');
-  saveVals();
-}
+			dolarCompra = dolarCompraHtml[0].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+			dolarVenta = dolarVentaHtml[0].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+			euroCompra = tablesLower[13].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+			euroVenta  = tablesLower[14].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+			realCompra = tablesLower[16].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+			realVenta  = tablesLower[17].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
 
-function getValuesDolar(resultString){
-  var window = require('jsdom').jsdom(resultString, null, {
-    FetchExternalResources: false,
-    ProcessExternalResources: false,
-    MutationEvents: false,
-    QuerySelector: false
-  }).createWindow();
-  var $ = jquery.create(window);
-  compraDolar = $('.bonosPrincipal.dolarPrincipal .floatleft .ultimo').text().split('COMPRA');
-  ventaDolar = $('.bonosPrincipal.dolarPrincipal .floatleft .cierreAnterior').text().split('VENTA');
-  console.log(compraDolar);
-  console.log(ventaDolar);
-  if(compraDolar === '' && ventaDolar === '') {
-    onError('Ambito esta caido FIJATE!');
-  }
-  console.log('dolar');
-  saveVals();
-}
-
-function getValuesEuro(resultString){
-  var window = require('jsdom').jsdom(resultString, null, {
-    FetchExternalResources: false,
-    ProcessExternalResources: false,
-    MutationEvents: false,
-    QuerySelector: false
-  }).createWindow();
-  var $ = jquery.create(window);
-  compraEuro = $('#compra big').text();
-  ventaEuro = $('#venta big').text();
-  console.log(compraEuro);
-  console.log(ventaEuro);
-  if(compraEuro === '' && ventaEuro === '') {
-    onError('Ambito esta caido FIJATE!');
-  }
-  console.log('euro');
-  saveVals();
+			saveVals();
+		})
+		.catch(function (err) {
+			onError(err);
+		});
 }
 
 function saveVals(){
   try {
-    console.log('deaca');
-    console.log(compraDolar);
-    console.log(ventaDolar);
-    console.log(compraReal);
-    console.log(ventaReal);
-    console.log(compraEuro);
-    console.log(ventaEuro);
-    if (compraDolar !== undefined && ventaDolar !== undefined && compraReal !== undefined && ventaReal !== undefined && compraEuro !== undefined && ventaEuro !== undefined) {
-      var dolarTarjeta;
-      var valoresDolarHoyObj;
-      var dateBA = new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace(/ GMT$/, '');
-      dolarTarjeta = parseFloat(ventaDolar[0].replace(',', '.')) + (parseFloat(ventaDolar[0].replace(',', '.')) * 35 / 100);
-      dolarTarjeta = dolarTarjeta.toFixed(3);
+		console.log(dolarCompra);
+		console.log(dolarVenta);
+		console.log(euroCompra);
+		console.log(euroVenta);
+		console.log(realCompra);
+		console.log(realVenta);
+
+    if (dolarCompra !== undefined &&
+      dolarVenta !== undefined &&
+			euroCompra !== undefined &&
+			euroVenta !== undefined &&
+			realCompra !== undefined &&
+			realVenta !== undefined) {
+
+      let valoresDolarHoyObj;
+      let dateBA = new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace(/ GMT$/, '');
+
       valoresDolarHoyObj = new Valores({
-        dolarCompra: compraDolar[0].replace(',', '.'),
-        dolarVenta: ventaDolar[0].replace(',', '.'),
-        dolarBlueCompra: compraDolar[1].replace(',', '.'),
-        dolarBlueVenta: ventaDolar[1].replace(',', '.'),
-        dolarTarjeta: dolarTarjeta,
-        realCompra: compraReal.replace(',', '.'),
-        realVenta: ventaReal.replace(',', '.'),
-        euroCompra: compraEuro.replace(',', '.'),
-        euroVenta: ventaEuro.replace(',', '.'),
+        dolarCompra: dolarCompra,
+        dolarVenta: dolarVenta,
+				euroCompra: euroCompra,
+				euroVenta: euroVenta,
+        realCompra: realCompra,
+        realVenta: realVenta,
         date: dateBA
       });
 
       Valores.findOne()
-          .select('dolarCompra dolarVenta dolarBlueCompra dolarBlueVenta dolarTarjeta realCompra realVenta euroCompra euroVenta date')
+          .select('dolarCompra dolarVenta euroCompra euroVenta realCompra realVenta date')
           .sort('-date')
           .exec(
           function (err, doc) {
@@ -188,12 +114,10 @@ function saveVals(){
             }
             if (doc.dolarCompra !== valoresDolarHoyObj.dolarCompra ||
                 doc.dolarVenta !== valoresDolarHoyObj.dolarVenta ||
-                doc.dolarBlueCompra !== valoresDolarHoyObj.dolarBlueCompra ||
-                doc.dolarBlueVenta !== valoresDolarHoyObj.dolarBlueVenta ||
-                doc.realCompra !== valoresDolarHoyObj.realCompra ||
-                doc.realVenta !== valoresDolarHoyObj.realVenta ||
                 doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
-                doc.euroVenta !== valoresDolarHoyObj.euroVenta) {
+                doc.euroVenta !== valoresDolarHoyObj.euroVenta ||
+							  doc.realCompra !== valoresDolarHoyObj.realCompra ||
+							  doc.realVenta !== valoresDolarHoyObj.realVenta) {
               valoresDolarHoyObj.save(
                   function (err) {
                     if (err) {
@@ -207,12 +131,12 @@ function saveVals(){
             }
           }
       );
-      compraDolar = undefined;
-      ventaDolar = undefined;
-      compraReal = undefined;
-      ventaReal = undefined;
-      compraEuro = undefined;
-      ventaEuro = undefined;
+      dolarCompra = '';
+      dolarVenta = '';
+      euroCompra = '';
+      euroVenta = '';
+      realCompra = '';
+      realVenta = '';
     }
   } catch(err) {
     onError(err);
@@ -222,7 +146,7 @@ function saveVals(){
 function onError(err) {
   mail.mailOptions.subject = 'DolarHoyServer Info: Error';
   mail.mailOptions.html = 'ERROR connecting to: ' + uriString + '. ' + err;
-  mail.sendMail();
+  // mail.sendMail();
   console.log(err);
 }
 
