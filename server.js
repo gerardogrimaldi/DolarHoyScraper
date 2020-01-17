@@ -8,12 +8,24 @@ const Valores = mongoose.model('ValoresDolarHoy', valoresSchema);
 const offset = -3;
 const rp = require('request-promise');
 const intervalTime = 900000;
-let dolarCompra;
-let dolarVenta;
+let dolarOficialCompra;
+let dolarOficialVenta;
+let dolarLibreCompra;
+let dolarLibreVenta;
+let dolarMayoristaCompra;
+let dolarMayoristaVenta;
+let dolarBolsaCompra;
+let dolarBolsaVenta;
+let dolarLiquiCompra;
+let dolarLiquiVenta;
 let euroCompra;
 let euroVenta;
 let realCompra;
 let realVenta;
+let pesoUruguayoCompra;
+let pesoUruguayoVenta;
+let pesoChilenoCompra;
+let pesoChilenoVenta;
 let work = false;
 
 mongoose.connect(uriString, { useNewUrlParser: true }, 
@@ -61,12 +73,31 @@ function worker() {
 			let dolarVentaHtml = $('.col-md-6.venta span', html);
 			let tablesLower = $('.table-responsive td', html);
 
-			dolarCompra = dolarCompraHtml[0].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
-			dolarVenta = dolarVentaHtml[0].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
-			euroCompra = tablesLower[13].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
-			euroVenta  = tablesLower[14].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
-			realCompra = tablesLower[16].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
-			realVenta  = tablesLower[17].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarOficialCompra    = tablesLower[1].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarOficialVenta     = tablesLower[2].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarLibreCompra      = tablesLower[4].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarLibreVenta       = tablesLower[5].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarMayoristaCompra  = tablesLower[7].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarMayoristaVenta   = tablesLower[8].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarBolsaCompra      = tablesLower[10].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarBolsaVenta       = tablesLower[11].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarLiquiCompra      = tablesLower[13].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      dolarLiquiVenta       = tablesLower[14].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      euroCompra            = tablesLower[16].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      euroVenta             = tablesLower[17].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      realCompra            = tablesLower[19].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      realVenta             = tablesLower[20].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      pesoUruguayoCompra    = tablesLower[22].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      pesoUruguayoVenta     = tablesLower[23].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      pesoChilenoCompra     = tablesLower[25].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+      pesoChilenoVenta      = tablesLower[26].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');
+
+      /*dolarCompra = dolarCompraHtml[0].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');*/
+			/*dolarVenta  = dolarVentaHtml[0].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');*/
+			/*euroCompra = tablesLower[13].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');*/
+			/*euroVenta  = tablesLower[14].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');*/
+			/*realCompra = tablesLower[16].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');*/
+			/*realVenta  = tablesLower[17].children[0].data.replace('$', '').replace(',', '.').replace(' ', '');*/
 
 			saveVals();
 		})
