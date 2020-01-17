@@ -4,15 +4,15 @@
     "dependencies": {
         "body-parser": "^1.18.3",
         "cheerio": "^1.0.0-rc.2",
-        "crawler": "1.2.0",
+        "crawler": "^1.2.1",
         "express": "4.16.x",
         "jade": "1.11.0",
-        "jquery": "3.3",
+        "jquery": "^3.4.1",
         "jsdom": "13.2.0",
         "mongodb": "3.1.13",
         "mongoose": ">=4.1.11",
         "nodemailer": "^5.1.1",
-        "puppeteer": "^1.12.2",
+        "puppeteer": "^1.20.0",
         "request": "^2.88.0",
         "request-promise": "^4.2.4"
     },
