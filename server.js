@@ -26,7 +26,7 @@ let pesoUruguayoCompra;
 let pesoUruguayoVenta;
 let pesoChilenoCompra;
 let pesoChilenoVenta;
-let work = false;
+let work = true;
 
 mongoose.connect(uriString, { useNewUrlParser: true }, 
   function (err, res) {
@@ -39,8 +39,6 @@ mongoose.connect(uriString, { useNewUrlParser: true },
 });
 
 let app = express();
-
-app.set('port', process.env.PORT || 3000);
 
 function main() {
   if (work) {
@@ -108,30 +106,68 @@ function worker() {
 
 function saveVals(){
   try {
-		console.log(dolarCompra);
-		console.log(dolarVenta);
-		console.log(euroCompra);
-		console.log(euroVenta);
-		console.log(realCompra);
-		console.log(realVenta);
+		console.log('dolar Oficial Compra ' + dolarOficialCompra);
+    console.log('dolar Oficial Venta ' + dolarOficialVenta);
+    console.log('dolar Libre Compra ' + dolarLibreCompra);
+    console.log('dolar Libre Venta ' + dolarLibreVenta);
+    console.log('dolar Mayorista Compra ' + dolarMayoristaCompra);
+    console.log('dolar Mayorista Venta ' + dolarMayoristaVenta);
+    console.log('dolar Bolsa Compra ' + dolarBolsaCompra);
+    console.log('dolar Bolsa Venta ' + dolarBolsaVenta);
+    console.log('dolar Liqui Compra ' + dolarLiquiCompra);
+    console.log('dolar Liqui Venta ' + dolarLiquiVenta);
+    console.log('euro Compra ' + euroCompra);
+    console.log('euro Venta ' + euroVenta);
+    console.log('real Compra ' + realCompra);
+    console.log('real Venta ' + realVenta);
+    console.log('peso Uruguayo Compra ' + pesoUruguayoCompra);
+    console.log('peso Uruguayo Venta ' + pesoUruguayoVenta);
+    console.log('peso Chileno Compra ' + pesoChilenoCompra);
+    console.log('peso Chileno Venta ' + pesoChilenoVenta);
 
-    if (dolarCompra !== undefined &&
-      dolarVenta !== undefined &&
-			euroCompra !== undefined &&
-			euroVenta !== undefined &&
-			realCompra !== undefined &&
-			realVenta !== undefined) {
+    if (
+      dolarOficialCompra !== undefined &&
+      dolarOficialVenta !== undefined &&
+      dolarLibreCompra !== undefined &&
+      dolarLibreVenta !== undefined &&
+      dolarMayoristaCompra !== undefined &&
+      dolarMayoristaVenta !== undefined &&
+      dolarBolsaCompra !== undefined &&
+      dolarBolsaVenta !== undefined &&
+      dolarLiquiCompra !== undefined &&
+      dolarLiquiVenta !== undefined &&
+      euroCompra !== undefined &&
+      euroVenta !== undefined &&
+      realCompra !== undefined &&
+      realVenta !== undefined &&
+      pesoUruguayoCompra !== undefined &&
+      pesoUruguayoVenta !== undefined &&
+      pesoChilenoCompra !== undefined &&
+      pesoChilenoVenta !== undefined
+      ) {
 
       let valoresDolarHoyObj;
       let dateBA = new Date(new Date().getTime() + offset * 3600 * 1000).toUTCString().replace(/ GMT$/, '');
 
       valoresDolarHoyObj = new Valores({
-        dolarCompra: dolarCompra,
-        dolarVenta: dolarVenta,
-				euroCompra: euroCompra,
-				euroVenta: euroVenta,
+        dolarOficialCompra: dolarOficialCompra,
+        dolarOficialVenta: dolarOficialVenta,
+        dolarLibreCompra: dolarLibreCompra,
+        dolarLibreVenta: dolarLibreVenta,
+        dolarMayoristaCompra: dolarMayoristaCompra,
+        dolarMayoristaVenta: dolarMayoristaVenta,
+        dolarBolsaCompra: dolarBolsaCompra,
+        dolarBolsaVenta: dolarBolsaVenta,
+        dolarLiquiCompra: dolarLiquiCompra,
+        dolarLiquiVenta: dolarLiquiVenta,
+        euroCompra: euroCompra,
+        euroVenta: euroVenta,
         realCompra: realCompra,
         realVenta: realVenta,
+        pesoUruguayoCompra: pesoUruguayoCompra,
+        pesoUruguayoVenta: pesoUruguayoVenta,
+        pesoChilenoCompra: pesoChilenoCompra,
+        pesoChilenoVenta: pesoChilenoVenta,
         date: dateBA
       });
 
@@ -143,31 +179,56 @@ function saveVals(){
             if (err) {
               return onError(err);
             }
-            if (doc.dolarCompra !== valoresDolarHoyObj.dolarCompra ||
-                doc.dolarVenta !== valoresDolarHoyObj.dolarVenta ||
-                doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
-                doc.euroVenta !== valoresDolarHoyObj.euroVenta ||
-							  doc.realCompra !== valoresDolarHoyObj.realCompra ||
-							  doc.realVenta !== valoresDolarHoyObj.realVenta) {
+            if (
+              doc.dolarOficialCompra !== valoresDolarHoyObj.dolarOficialCompra ||
+              doc.dolarOficialVenta !== valoresDolarHoyObj.dolarOficialVenta ||
+              doc.dolarLibreCompra !== valoresDolarHoyObj.dolarLibreCompra ||
+              doc.dolarLibreVenta !== valoresDolarHoyObj.dolarLibreVenta ||
+              doc.dolarMayoristaCompra !== valoresDolarHoyObj.dolarMayoristaCompra ||
+              doc.dolarMayoristaVenta !== valoresDolarHoyObj.dolarMayoristaVenta ||
+              doc.dolarBolsaCompra !== valoresDolarHoyObj.dolarBolsaCompra ||
+              doc.dolarBolsaVenta !== valoresDolarHoyObj.dolarBolsaVenta ||
+              doc.dolarLiquiCompra !== valoresDolarHoyObj.dolarLiquiCompra ||
+              doc.dolarLiquiVenta !== valoresDolarHoyObj.dolarLiquiVenta ||
+              doc.euroCompra !== valoresDolarHoyObj.euroCompra ||
+              doc.euroVenta !== valoresDolarHoyObj.euroVenta ||
+              doc.realCompra !== valoresDolarHoyObj.realCompra ||
+              doc.realVenta !== valoresDolarHoyObj.realVenta ||
+              doc.pesoUruguayoCompra !== valoresDolarHoyObj.pesoUruguayoCompra ||
+              doc.pesoUruguayoVenta !== valoresDolarHoyObj.pesoUruguayoVenta ||
+              doc.pesoChilenoCompra !== valoresDolarHoyObj.pesoChilenoCompra ||
+              doc.pesoChilenoVenta !== valoresDolarHoyObj.pesoChilenoVenta
+            ) {
               valoresDolarHoyObj.save(
-                  function (err) {
-                    if (err) {
-                      console.log('Error on save!');
-                    }
-                    else {
-                      console.log('Saved!');
-                    }
+                function (err) {
+                  if (err) {
+                    console.log('Error on save!');
+                  } else {
+                    console.log('Saved!');
                   }
+                }
               )
             }
           }
       );
-      dolarCompra = '';
-      dolarVenta = '';
+      dolarOficialCompra = '';
+      dolarOficialVenta = '';
+      dolarLibreCompra = '';
+      dolarLibreVenta = '';
+      dolarMayoristaCompra = '';
+      dolarMayoristaVenta = '';
+      dolarBolsaCompra = '';
+      dolarBolsaVenta = '';
+      dolarLiquiCompra = '';
+      dolarLiquiVenta = '';
       euroCompra = '';
       euroVenta = '';
       realCompra = '';
       realVenta = '';
+      pesoUruguayoCompra = '';
+      pesoUruguayoVenta = '';
+      pesoChilenoCompra = '';
+      pesoChilenoVenta = '';
     }
   } catch(err) {
     onError(err);
@@ -219,6 +280,8 @@ app.get('/stop/:pass', function(req, res) {
   }
 });
 
-app.listen(process.env.PORT, process.env.IP);
+app.listen(process.env.PORT || 3000, process.env.IP);
 
-console.log('Server HTTP Listening on port ' + process.env.PORT + '...');
+main();
+
+console.log('Server HTTP Listening on port ' + ( process.env.PORT || 3000 ) + '...');
