@@ -2,10 +2,10 @@
     "name": "DolarHoyScraper",
     "version": "1.0.1",
     "dependencies": {
-        "body-parser": "^1.18.3",
+        "body-parser": "^1.20.1",
         "cheerio": "^1.0.0-rc.2",
         "crawler": "^1.2.1",
-        "express": "4.16.x",
+        "express": "4.18.x",
         "jade": "1.11.0",
         "jquery": "^3.4.1",
         "jsdom": "13.2.0",
